@@ -41,6 +41,24 @@
       const $operator = document.querySelector("#operator");
       const $result = document.querySelector("#result");
 
+      const calculate = () => {
+        let result;
+        switch (operator) {
+          case "+":
+            result = parseInt(numOne) + parseInt(numTwo);
+            return result;
+          case "-":
+            result = parseInt(numOne) - parseInt(numTwo);
+            return result;
+          case "x":
+            result = parseInt(numOne) * parseInt(numTwo);
+            return result;
+          case "/":
+            result = parseInt(numOne) / parseInt(numTwo);
+            return result;
+        }
+      };
+
       const onClickNumBtn = (e) => {
         if (operator) {
           if (!numTwo) {
@@ -59,37 +77,32 @@
           alert("숫자를 먼저 입력해 주세요");
           return;
         }
+        if (numTwo) {
+          const result = calculate();
+          $result.value = result;
+          numOne = result;
+          numTwo = "";
+        }
         operator = e.target.textContent;
         $operator.value = operator;
       };
 
       const onCalculateBtn = () => {
         if (numOne && operator && numTwo) {
-          // switch 문으로 계산
           $operator.value = "=";
-          let result;
-          switch (operator) {
-            case "+":
-              result = parseInt(numOne) + parseInt(numTwo);
-              break;
-            case "-":
-              result = parseInt(numOne) - parseInt(numTwo);
-              break;
-            case "x":
-              result = parseInt(numOne) * parseInt(numTwo);
-              break;
-            case "/":
-              result = parseInt(numOne) / parseInt(numTwo);
-              break;
-          }
-          console.log(numOne, typeof numOne);
-          console.log(numTwo, typeof numTwo);
-          console.log(operator, typeof operator);
-          console.log(result, typeof result);
+          const result = calculate();
           $result.value = result;
         } else {
           alert("식이 완성되지 않았습니다.");
         }
+      };
+
+      const onClickClearBtn = () => {
+        numOne = "";
+        operator = "";
+        numTwo = "";
+        $operator.value = "";
+        $result.value = "";
       };
 
       document.querySelector("#num-0").addEventListener("click", onClickNumBtn);
@@ -117,7 +130,9 @@
       document
         .querySelector("#calculate")
         .addEventListener("click", onCalculateBtn);
-      document.querySelector("#clear").addEventListener("click", () => {});
+      document
+        .querySelector("#clear")
+        .addEventListener("click", onClickClearBtn);
     </script>
   </body>
 </html>
