@@ -19,6 +19,7 @@
       const $button = document.querySelector("button");
       let word;
       let newWord;
+      let order = 1;
 
       const number = parseInt(prompt("참가자는 몇 명 입니까?"));
 
@@ -26,18 +27,34 @@
         newWord = e.target.value;
       };
       const onClickBtn = () => {
-        if (!(newWord.length === 3)) {
-          alert(`${$order.textContent}번째 참가자 패배 하였습니다ㅠㅜ..`);
+        if (
+          !(newWord.length === 3) ||
+          (word && word[word.length - 1] !== newWord[0])
+        ) {
+          alert(`${order}번째 참가자 패배 하였습니다ㅠㅜ..`);
+          word = null;
+          $word.textContent = "";
+          newWord = null;
+          $input.value = "";
+          $input.focus();
+          order = 1;
+          $order.textContent = 1;
+
+          return;
         }
-        if (word && word[word.length - 1] !== newWord[0]) {
-          alert(`${$order.textContent}번째 참가자 패배 하였습니다ㅠㅜ..`);
-        }
+
         word = newWord;
         $word.textContent = word;
         newWord = "";
         $input.value = "";
         $input.focus();
-        // 1번째 차례입니다 턴넘기기 구현 해야함..
+        if (order + 1 > number) {
+          order = 1;
+          $order.textContent = 1;
+        } else {
+          order += 1;
+          $order.textContent = order;
+        }
       };
 
       $input.addEventListener("input", onInput);

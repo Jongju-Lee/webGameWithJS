@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Number BaseBall</title>
+  </head>
+  <body>
+    <h2>Number BaseBall</h2>
+    <div>내가 고른 숫자 : <span class="myNum"></span></div>
+    <div><span class="chance">1</span>회째 시도 입니다.</div>
+    <input type="text" maxlength="4" />
+    <button class="btn_submit">제출</button>
+    <div class="logo_wrapper">
+      <div>로그</div>
+    </div>
+    <script>
+      const $myNum = document.querySelector(".myNum");
+      const $chance = document.querySelector(".chance");
+      const $input = document.querySelector("input");
+      const $button = document.querySelector(".btn_submit");
+      const $logo_wrapper = document.querySelector(".logo_wrapper");
+
+      let myNum;
+      let comNum;
+      let chance;
+      let strike;
+      let ball;
+
+      const createComNum = () => {
+        const numArray = Array(9)
+          .fill()
+          .map((it, idx) => {
+            return idx + 1;
+          })
+          .sort(() => Math.random() - 0.5);
+        comNum = numArray.slice(0, 4);
+      };
+
+      const onSubmitBtn = () => {
+        const num = Number($input.value);
+        console.log(typeof num);
+        console.log(comNum);
+        if (typeof num !== "number") {
+        }
+        myNum = [...num];
+        console.log(myNum);
+      };
+
+      const arr = ["a", "b", "c", "b"];
+      const set = new Set(arr);
+
+      console.log(arr.length);
+      console.log(set.size);
+
+      createComNum();
+
+      $button.addEventListener("click", onSubmitBtn);
+    </script>
+  </body>
+</html>

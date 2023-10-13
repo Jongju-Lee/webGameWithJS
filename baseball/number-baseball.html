@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Number-Baseball</title>
+  </head>
+  <body>
+    <form id="form">
+      <input required type="text" id="input" minlength="4" maxlength="4" />
+      <button>확인</button>
+    </form>
+    <div id="logs"></div>
+    <script>
+      const $input = document.querySelector("#input");
+      const $form = document.querySelector("#form");
+      const $logs = document.querySelector("#logs");
+
+      let numbers = [];
+      for (i = 0; i < 9; i++) {
+        numbers.push(i + 1);
+      }
+      let answer = [];
+      for (i = 0; i < 4; i++) {
+        const index = Math.floor(Math.random() * numbers.length);
+        answer.push(numbers[index]);
+        numbers.splice(index, 1);
+      }
+
+      const tries = [];
+      const checkInput = (input) => {
+        if (input.length !== 4) {
+          // 숫자가 4개 인가?
+          return alert("4자리 숫자를 입력 해주세요.");
+        }
+        if (new Set(input).size !== 4) {
+          return alert("중복되지 않게 입력 해주세요.");
+        }
+        if (tries.includes(input)) {
+          return alert("이미 시도한 값입니다.");
+        }
+      };
+
+      const onSubmit = (e) => {
+        e.preventDefault();
+        const value = $input.value;
+        $input.value = "";
+        $input.focus();
+        if (!checkInput(value)) {
+          return;
+        }
+        if (answer.join("") === value) {
+          alert("!Home Run! 승리 하였습니다~");
+          return;
+        }
+        if (tries.length >= 9) {
+          const message = document.createTextNode(
+            `패배...ㅠㅜ 정답은 ${answer.join("")}`
+          );
+          $logs.appendChild(message);
+          return;
+        }
+        // 홈런인지 검사해서 표시하기 5분 9초부터
+        tries.push(value);
+        // 숫자 비교
+        // answer, value 비교 함수 compare(answer, value) {}
+        // 홈런인지 체크 함수(홈런이면 tries.length번 시도로 홈런 입니다.)
+        // 홈런 아니면 strike, ball check해서 로그 출력
+        // tries.length를 시도횟수에 추가
+        // Error
+      };
+
+      const checkDuplicates = () => {
+        const value = "";
+      };
+
+      $form.addEventListener("submit", onSubmit);
+    </script>
+  </body>
+</html>
