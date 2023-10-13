@@ -6,6 +6,9 @@
     <title>Number-Baseball</title>
   </head>
   <body>
+    <h3>Number Baseball</h3>
+    <div><span id="attempt">1</span>차시도</div>
+    <div><span id="outCount">0</span>아웃</div>
     <form id="form">
       <input required type="text" id="input" minlength="4" maxlength="4" />
       <button>확인</button>
@@ -15,6 +18,9 @@
       const $input = document.querySelector("#input");
       const $form = document.querySelector("#form");
       const $logs = document.querySelector("#logs");
+      const $attempt = document.querySelector("#attempt");
+      const $outCount = document.querySelector("#outCount");
+      let out = 0;
 
       let numbers = [];
       for (i = 0; i < 9; i++) {
@@ -26,6 +32,13 @@
         answer.push(numbers[index]);
         numbers.splice(index, 1);
       }
+
+      const defeated = () => {
+        const message = document.createTextNode(
+          `패배...ㅠㅜ 정답은 ${answer.join("")}`
+        );
+        $logs.appendChild(message);
+      };
 
       const tries = [];
       const checkInput = (input) => {
@@ -39,6 +52,7 @@
         if (tries.includes(input)) {
           return alert("이미 시도한 값입니다.");
         }
+        return true;
       };
 
       const onSubmit = (e) => {
@@ -54,24 +68,40 @@
           return;
         }
         if (tries.length >= 9) {
-          const message = document.createTextNode(
-            `패배...ㅠㅜ 정답은 ${answer.join("")}`
-          );
-          $logs.appendChild(message);
+          defeated();
           return;
         }
-        // 홈런인지 검사해서 표시하기 5분 9초부터
-        tries.push(value);
-        // 숫자 비교
-        // answer, value 비교 함수 compare(answer, value) {}
-        // 홈런인지 체크 함수(홈런이면 tries.length번 시도로 홈런 입니다.)
-        // 홈런 아니면 strike, ball check해서 로그 출력
-        // tries.length를 시도횟수에 추가
-        // Error
-      };
+        let strike = 0;
+        let ball = 0;
 
-      const checkDuplicates = () => {
-        const value = "";
+        answer.forEach((it, idx) => {
+          const index = value.indexOf(it);
+          if (index > -1) {
+            // 일치하는 숫자 발견
+            if (index === i) {
+              //자리까지 같음
+              strike += 1;
+            } else {
+              // 숫자만 같음
+              ball += 1;
+            }
+          }
+        });
+
+        $logs.append(
+          `${value}: ${strike} 스트라이크, ${ball} 볼`,
+          document.createElement("br")
+        );
+        tries.push(value);
+        $attempt.textContent = tries.length + 1;
+        if (strike === 0 && ball === 0) {
+          out += 1;
+          $outCount.textContent = out;
+          $logs.append("아웃~~!!", document.createElement("br"));
+        }
+        if (out >= 3) {
+          defeated();
+        }
       };
 
       $form.addEventListener("submit", onSubmit);
