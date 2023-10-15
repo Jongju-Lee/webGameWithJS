@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KKT-create-self</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <header>
+      <h2 style="font-weight: bold">KKT</h2>
+    </header>
+    <article>
+      <div>총 <span class="number"></span>명 참가</div>
+      <div><span class="order">1</span>번째 참가자 차례 입니다.</div>
+      <div>제시어 : <span class="word"></span></div>
+      <form>
+        <div class="mb-3">
+          <div class="input_btn_wrapper">
+            <input
+              type="text"
+              class="form-control"
+              id="exampleFormControlInput1"
+              placeholder="3글자 단어를 입력하세요."
+            />
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </form>
+    </article>
+    <script>
+      $input = document.querySelector("input");
+      $button = document.querySelector("button");
+      $order = document.querySelector(".order");
+      $word = document.querySelector(".word");
+      $number = document.querySelector(".number");
+      let word;
+      let newWord;
+      let order = 1;
+      let number;
+
+      const startPrompt = () => {
+        const value = prompt(
+          "참가자는 총 몇명입니까?",
+          "최소 2명 최대 9명까지 가능합니다."
+        );
+        if (parseInt(value) < 2 || parseInt(value) > 9) {
+          // 2 ~ 9명만 가능
+          startPrompt();
+        }
+        number = value;
+        $number.textContent = value;
+      };
+
+      const initializationData = () => {
+        word = null;
+        $word.textContent = "";
+        newWord = null;
+        order = 1;
+        $order.textContent = order;
+        $input.value = "";
+        $input.focus();
+      };
+
+      const onInput = (e) => {
+        newWord = e.target.value;
+      };
+
+      const onSubmitButton = (e) => {
+        e.preventDefault();
+        if (!(newWord.length === 3)) {
+          // 인풋 입력값 3글자가 아니면
+          alert(`${order}번째 참가자 패배...ㅠㅜ 3글자만 입력 가능합니다`);
+          initializationData();
+          return;
+        }
+        if (word && word[word.length - 1] !== newWord[0]) {
+          // 첫번째 아니면서 글자 맞는지?
+          alert(
+            `${order}번째 참가자 패배...ㅠㅜ 제시어 끝글자와 입력한 첫글자가 맞지 않네요..`
+          );
+          initializationData();
+          return;
+        }
+        if (tries.includes(newWord)) {
+          alert(`패배...ㅠㅜ ${newWord}는 이미 시도한 값입니다.`);
+          initializationData();
+          return;
+        }
+
+        word = newWord;
+        $word.textContent = word;
+        order += 1;
+        $order.textContent = order;
+        if (order > number) {
+          order = 1;
+          $order.textContent = order;
+        }
+        $input.value = "";
+        $input.focus();
+      };
+
+      startPrompt();
+
+      $input.addEventListener("input", onInput);
+      $button.addEventListener("click", onSubmitButton);
+      const tries = [];
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

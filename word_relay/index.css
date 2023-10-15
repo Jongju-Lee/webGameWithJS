@@ -1,0 +1,16 @@
+body {
+  padding: 10px;
+}
+.form-label {
+  font-weight: bold;
+  font-size: 40px;
+}
+form {
+  width: 500px;
+}
+.input_btn_wrapper {
+  display: flex;
+}
+.input_btn_wrapper button {
+  margin-left: 3px;
+}
