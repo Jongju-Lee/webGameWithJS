@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lotto</title>
+    <style>
+      body {
+        padding: 20px;
+      }
+
+      .ball {
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        border: 1px solid black;
+        border-radius: 30px;
+        text-align: center;
+        line-height: 60px;
+        margin: 15px;
+        font-size: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Lotto</h1>
+      <div class="winBalls"></div>
+      <h1>Bonus</h1>
+      <div class="bonusBalls"></div>
+    </header>
+    <script>
+      const $winBalls = document.querySelector(".winBalls");
+      const $bonusBalls = document.querySelector(".bonusBalls");
+
+      const candidate = Array(45)
+        .fill()
+        .map((it, idx) => idx + 1);
+
+      const shuffle = [];
+      while (candidate.length > 0) {
+        const random = Math.floor(Math.random() * candidate.length);
+        const spliceArr = candidate.splice(random, 1);
+        const value = spliceArr[0];
+        shuffle.push(value);
+      }
+      const winBalls = shuffle.slice(0, 6).sort((a, b) => a - b);
+      console.log(winBalls);
+      const bonusBalls = shuffle[6];
+
+      const colorize = (target, number) => {
+        if (number < 10) {
+          target.style.backgroundColor = "orange";
+        } else if (number < 20) {
+          target.style.backgroundColor = "green";
+        } else if (number < 30) {
+          target.style.backgroundColor = "yellow";
+        } else if (number < 40) {
+          target.style.backgroundColor = "blue";
+          target.style.color = "white";
+        } else {
+          target.style.backgroundColor = "black";
+          target.style.color = "white";
+        }
+      };
+
+      const throwBalls = (number, target) => {
+        const $ball = document.createElement("div");
+        $ball.className = "ball";
+        $ball.textContent = number;
+        colorize($ball, number);
+        target.append($ball);
+      };
+
+      winBalls.map((number, idx) => {
+        setTimeout(() => {
+          throwBalls(number, $winBalls);
+        }, (idx + 1) * 1000);
+      });
+
+      setTimeout(() => {
+        throwBalls(bonusBalls, $bonusBalls);
+      }, 7000);
+    </script>
+  </body>
+</html>

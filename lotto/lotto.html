@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lotto 추첨기</title>
+    <style>
+      .ball {
+        display: inline-block;
+        border: 1px solid black;
+        border-radius: 20px;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 20px;
+        text-align: center;
+        margin-right: 20px;
+      }
+
+      .yellow {
+        background-color: yellow;
+      }
+      .green {
+        background-color: green;
+      }
+      .blue {
+        background-color: blue;
+      }
+      .red {
+        background-color: red;
+      }
+      .black {
+        background-color: black;
+        color: white;
+      }
+    </style>
+  </head>
+  <body style="padding: 10px">
+    <h2>추첨 결과는??</h2>
+    <div style="margin: 10px" id="result"></div>
+    <h3>Bonus</h3>
+    <div style="margin: 10px" id="bonus"></div>
+    <script>
+      const candidate = Array(45)
+        .fill()
+        .map((it, idx) => idx + 1);
+      const shuffle = [];
+      while (candidate.length > 0) {
+        const index = Math.floor(Math.random() * candidate.length);
+        const spliceArray = candidate.splice(index, 1);
+        const value = spliceArray[0];
+        shuffle.push(value);
+      }
+      const winBall = shuffle.slice(0, 6).sort((a, b) => a - b);
+      const bonus = shuffle[6];
+
+      const $result = document.querySelector("#result");
+      const $bonus = document.querySelector("#bonus");
+      // setTimeout(() => {
+      //   const $ball = document.createElement("div");
+      //   $ball.className = "ball";
+      //   $ball.textContent = winBall[0];
+      //   $result.append($ball);
+      // }, 1000);
+      const createBall = (number, $target) => {
+        // 공을 화면에 생성해주는 함수
+        const $ball = document.createElement("div");
+        // if (number <= 9) {
+        //   $ball.className = "ball yellow";
+        // } else if (number >= 10 && number <= 19) {
+        //   $ball.className = "ball green";
+        // } else if (number >= 20 && number <= 29) {
+        //   $ball.className = "ball blue";
+        // } else if (number >= 30 && number <= 39) {
+        //   $ball.className = "ball red";
+        // } else if (number >= 40 && number <= 45) {
+        //   $ball.className = "ball black";
+        // }
+        $ball.className = "ball";
+        $ball.textContent = number;
+        if (number < 20) {
+          $ball.style.backgroundColor = "orange";
+        } else if (number < 30) {
+          $ball.style.backgroundColor = "yellow";
+        } else if (number < 40) {
+          $ball.style.backgroundColor = "blue";
+          $ball.style.color = "white";
+        } else if (number < 46) {
+          $ball.style.backgroundColor = "green";
+          $ball.style.color = "white";
+        }
+        $target.append($ball);
+      };
+
+      winBall.map((it, idx) => {
+        setTimeout(() => {
+          createBall(winBall[idx], $result);
+        }, (idx + 1) * 1000);
+      });
+
+      setTimeout(() => {
+        createBall(bonus, $bonus);
+      }, 7000);
+    </script>
+  </body>
+</html>
