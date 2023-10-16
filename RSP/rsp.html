@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>가위 바위 보!</title>
+    <style>
+      #computer {
+        width: 142px;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="computer"></div>
+    <div>
+      <button id="scissors" class="btn">가위</button>
+      <button id="rock" class="btn">바위</button>
+      <button id="paper" class="btn">보</button>
+    </div>
+    <div id="score">0</div>
+
+    <script>
+      const $computer = document.querySelector("#computer");
+      const $score = document.querySelector("#score");
+      const $rock = document.querySelector("#rock");
+      const $scissors = document.querySelector("#scissors");
+      const $paper = document.querySelector("#paper");
+      const IMG_URL = "./rsp.png";
+      $computer.style.background = `url(${IMG_URL}) 0 0`;
+      $computer.style.backgroundSize = "auto 200px";
+
+      const rspX = {
+        scissors: "0", // 가위
+        rock: "-220px", // 바위
+        paper: "-440px", // 보
+      };
+
+      const changeRSP = (comChoice, changeTarget) => {
+        computerChoice = comChoice;
+        $computer.style.background = `url(${IMG_URL}) ${changeTarget} 0`;
+        $computer.style.backgroundSize = "auto 200px";
+      };
+
+      let computerChoice = "scissors";
+      const changeComputerHand = () => {
+        if (computerChoice === "scissors") {
+          changeRSP("rock", rspX.rock);
+        } else if (computerChoice === "rock") {
+          changeRSP("paper", rspX.paper);
+        } else if (computerChoice === "paper") {
+          changeRSP("scissors", rspX.scissors);
+        }
+      };
+
+      let intervalId = setInterval(changeComputerHand, 100);
+
+      const clickButton = () => {
+        clearInterval(intervalId);
+        setTimeout(() => {
+          clearInterval(intervalId);
+          intervalId = setInterval(changeComputerHand, 100);
+        }, 1500);
+
+        // 승패 계산
+        // 점수 계산
+        // 3선승시 alert()
+      };
+      $rock.addEventListener("click", clickButton);
+      $scissors.addEventListener("click", clickButton);
+      $paper.addEventListener("click", clickButton);
+      // 10 월 17일 오전 01 : 05  removeEventListener 4분 59초부터
+    </script>
+  </body>
+</html>
