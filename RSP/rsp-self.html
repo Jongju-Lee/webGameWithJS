@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rsp - self</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+    <style>
+      body {
+        padding-top: 10px;
+        margin-top: 10px;
+        margin-left: 10px;
+      }
+
+      .computer {
+        width: 142px;
+        height: 200px;
+        margin-left: 25px;
+        margin-bottom: 20px;
+      }
+      .button_wrapper {
+        margin: 10px;
+      }
+      .score_wrapper {
+        margin-left: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="computer"></div>
+    <div class="button_wrapper">
+      <button id="scissors" type="button" class="btn btn-success">가위</button>
+      <button id="rock" type="button" class="btn btn-success">바위</button>
+      <button id="paper" type="button" class="btn btn-success">보</button>
+    </div>
+    <div class="score_wrapper">
+      <h4>5판 3선승제</h4>
+      <div>My Score : <span class="myScore"> 0</span>점</div>
+      <div>Com Score : <span class="comScore">0</span>점</div>
+      <div class="log"></div>
+    </div>
+
+    <script>
+      const $computer = document.querySelector(".computer");
+      const $myScore = document.querySelector(".myScore");
+      const $comScore = document.querySelector(".comScore");
+      const $scissors = document.querySelector("#scissors");
+      const $rock = document.querySelector("#rock");
+      const $paper = document.querySelector("#paper");
+      const $log = document.querySelector(".log");
+      const IMG_URL = "./rsp.png";
+      $computer.style.background = `url(${IMG_URL}) 0 0`;
+      $computer.style.backgroundSize = "auto 200px";
+
+      let comChoice = "scissors";
+      let myChoice;
+      let myScore = 0;
+      let comScore = 0;
+
+      const rspX = {
+        scissors: "0",
+        rock: "-228px",
+        paper: "-445px",
+      };
+
+      const rspChange = (computerChoice, changeTarget) => {
+        comChoice = computerChoice;
+        $computer.style.background = `url(${IMG_URL}) ${changeTarget} 0`;
+        $computer.style.backgroundSize = "auto 200px";
+      };
+      const computerChangeHand = () => {
+        if (comChoice === "scissors") {
+          rspChange("rock", rspX.rock);
+        } else if (comChoice === "rock") {
+          rspChange("paper", rspX.paper);
+        } else if (comChoice === "paper") {
+          rspChange("scissors", rspX.scissors);
+        }
+      };
+      let intervalId = setInterval(computerChangeHand, 100);
+
+      let clickable = true;
+      const onCLickBtn = (e) => {
+        if (clickable) {
+          clickable = false;
+          clearInterval(intervalId);
+          myChoice = e.target.id;
+          if (myChoice === "scissors") {
+            if (comChoice === "scissors") {
+              $log.textContent = "비겼습니다.";
+            } else if (comChoice === "rock") {
+              $log.textContent = "졌습니다.";
+              comScore += 1;
+              $comScore.textContent = comScore;
+            } else if (comChoice === "paper") {
+              $log.textContent = "이겼습니다.";
+              myScore += 1;
+              $myScore.textContent = myScore;
+            }
+          }
+          if (myChoice === "rock") {
+            if (comChoice === "scissors") {
+              $log.textContent = "이겼습니다.";
+              myScore += 1;
+              $myScore.textContent = myScore;
+            } else if (comChoice === "rock") {
+              $log.textContent = "비겼습니다.";
+            } else if (comChoice === "paper") {
+              $log.textContent = "졌습니다.";
+              comScore += 1;
+              $comScore.textContent = comScore;
+            }
+          }
+          if (myChoice === "paper") {
+            if (comChoice === "scissors") {
+              $log.textContent = "졌습니다.";
+              comScore += 1;
+              $comScore.textContent = comScore;
+            } else if (comChoice === "rock") {
+              $log.textContent = "이겼습니다.";
+              myScore += 1;
+              $myScore.textContent = myScore;
+            } else if (comChoice === "paper") {
+              $log.textContent = "비겼습니다.";
+            }
+          }
+          const winner = () => {
+            if (myScore >= 3) {
+              return true;
+            } else if (comScore >= 3) {
+              return false;
+            }
+          };
+          if (winner() === true) {
+            alert("player 승리!");
+            Initialization();
+          } else if (winner() === false) {
+            alert("Computer 승리!");
+            Initialization();
+          }
+
+          setTimeout(() => {
+            clickable = true;
+            clearInterval(intervalId);
+            intervalId = setInterval(computerChangeHand, 100);
+          }, 1500);
+        }
+      };
+
+      const Initialization = () => {
+        myScore = 0;
+        $myScore.textContent = myScore;
+        comScore = 0;
+        $comScore.textContent = comScore;
+      };
+
+      $scissors.addEventListener("click", onCLickBtn);
+      $rock.addEventListener("click", onCLickBtn);
+      $paper.addEventListener("click", onCLickBtn);
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

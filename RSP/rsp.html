@@ -30,6 +30,8 @@
       $computer.style.background = `url(${IMG_URL}) 0 0`;
       $computer.style.backgroundSize = "auto 200px";
 
+      let score = 0;
+
       const rspX = {
         scissors: "0", // 가위
         rock: "-220px", // 바위
@@ -37,6 +39,7 @@
       };
 
       const changeRSP = (comChoice, changeTarget) => {
+        // 가위바위보
         computerChoice = comChoice;
         $computer.style.background = `url(${IMG_URL}) ${changeTarget} 0`;
         $computer.style.backgroundSize = "auto 200px";
@@ -44,6 +47,7 @@
 
       let computerChoice = "scissors";
       const changeComputerHand = () => {
+        //  com 가위바위보 자동 전환
         if (computerChoice === "scissors") {
           changeRSP("rock", rspX.rock);
         } else if (computerChoice === "rock") {
@@ -52,19 +56,50 @@
           changeRSP("scissors", rspX.scissors);
         }
       };
-
       let intervalId = setInterval(changeComputerHand, 100);
 
-      const clickButton = () => {
-        clearInterval(intervalId);
-        setTimeout(() => {
-          clearInterval(intervalId);
-          intervalId = setInterval(changeComputerHand, 100);
-        }, 1500);
+      const scoreTable = {
+        rock: 0,
+        scissors: 1,
+        paper: -1,
+      };
 
-        // 승패 계산
-        // 점수 계산
-        // 3선승시 alert()
+      let clickable = true;
+      const clickButton = (e) => {
+        // 버튼 클릭했을때
+        if (clickable) {
+          // 멈춘동안 버튼 클릭 못하게 하는 flag 함수
+          clearInterval(intervalId);
+          clickable = false;
+          const myChoice =
+            e.target.textContent === "바위"
+              ? "rock"
+              : e.target.textContent === "가위"
+              ? "scissors"
+              : "paper";
+          const myScore = scoreTable[myChoice];
+          const computerScore = scoreTable[computerChoice];
+          const diff = myScore - computerScore;
+
+          let message;
+          // 2, -1은 승리조건이고, -2, 1은 패배조건, 점수표 참고
+          if ([2, -1].includes(diff)) {
+            score += 1;
+            message = "승리";
+          } else if ([-2, 1].includes(diff)) {
+            score -= 1;
+            message = "패배";
+          } else {
+            message = "무승부";
+          }
+          $score.textContent = `${message} 총 ${score}점`;
+          setTimeout(() => {
+            // 1.5초 뒤에 멈춘게 다시 동작하고 클릭이 가능해짐.
+            clickable = true;
+            clearInterval(intervalId);
+            intervalId = setInterval(changeComputerHand, 100);
+          }, 1500);
+        }
       };
       $rock.addEventListener("click", clickButton);
       $scissors.addEventListener("click", clickButton);
