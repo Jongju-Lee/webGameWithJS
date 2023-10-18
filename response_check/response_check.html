@@ -3,13 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Response Check(create myself)</title>
     <style>
+      body {
+        padding: 10px;
+      }
       #screen {
         width: 300px;
         height: 200px;
+        padding-top: 10px;
         text-align: center;
-        user-select: none;
       }
       #screen.waiting {
         background-color: aqua;
@@ -24,77 +27,70 @@
     </style>
   </head>
   <body>
-    <div id="screen" class="waiting">클릭해서 시작하세요</div>
-    <div>방금 기록 : <span id="result"></span>초</div>
-    <div>평균 기록 : <span id="average"></span>초</div>
-    <div id="podium">
-      <div>1st : <span id="first"></span></div>
-      <div>2st : <span id="second"></span></div>
-      <div>3st : <span id="third"></span></div>
-    </div>
+    <div id="screen" class="waiting">화면을 클릭하면 측정을 시작합니다.</div>
+    <div class="result"></div>
+    <div class="topFive"></div>
 
     <script>
       const $screen = document.querySelector("#screen");
-      const $result = document.querySelector("#result");
-      const $average = document.querySelector("#average");
-      const $first = document.querySelector("#first");
-      const $second = document.querySelector("#second");
-      const $third = document.querySelector("#third");
-      const $log = document.querySelector("#log");
-      let startTime;
-      let endTime;
-      const records = [];
+      const $result = document.querySelector(".result");
+
       let timeoutId;
+      let screenChangedTime;
+      let clickTime;
+      let average;
+      const records = [];
 
-      const calculatingAverageValue = () => {
-        // let sum = 0;
-        // records.forEach((num) => {
-        //   sum += num;
-        // });
-        // average = sum / records.length;
-        // $average.textContent = average.toFixed(3);
-        const average = records.reduce((a, c) => a + c) / records.length;
-        $average.textContent = average.toFixed(3);
+      const calculateAverage = () => {};
+
+      calculateTopFive = () => {
+        const sortedRecords = records.sort((a, b) => a - b).slice(0, 5);
+        sortedRecords.forEach((record, idx) => {
+          $result.append(
+            document.createElement("br"),
+            `${idx + 1}위 : ${record}초`
+          );
+        });
       };
 
-      const ranking = () => {
-        $first.textContent = records[0];
-        $second.textContent = records[1];
-        $third.textContent = records[2];
-      };
-
-      $screen.addEventListener("click", (e) => {
+      const onClickScreen = (e) => {
         if (e.target.classList.contains("waiting")) {
-          // 파랑화면 일때
+          // 화면 파란색일때
           $screen.classList.remove("waiting");
           $screen.classList.add("ready");
-          $screen.textContent = "초록색이 되면 클릭하세요.";
-          timeoutId = setTimeout(function () {
+          $screen.textContent = "초록색이 되면 click!";
+          const random = Math.floor(Math.random() * 2000 + 1000);
+          timeoutId = setTimeout(() => {
             $screen.classList.remove("ready");
             $screen.classList.add("now");
-            $screen.textContent = "지금 바로 클릭 하세요!!!";
-            startTime = new Date();
-          }, Math.floor(Math.random() * 1000) + 2000); // 2초에서 3초사이
+            $screen.textContent = "지금 누르세요!!";
+            screenChangedTime = new Date();
+          }, random);
         } else if (e.target.classList.contains("ready")) {
+          // 화면 빨간색일때
           clearTimeout(timeoutId);
+          alert("너무 성급하셨습니다.. 초록색 화면에서 click 해주세요!");
           $screen.classList.remove("ready");
           $screen.classList.add("waiting");
-          $screen.textContent = "너무 성급 하시군요~";
         } else if (e.target.classList.contains("now")) {
-          endTime = new Date();
-          const result = (endTime - startTime) / 1000;
-          $result.textContent = result;
-          records.push(result); // records에 결과값 [] 로 저장
-          records.sort((a, b) => a - b);
-          calculatingAverageValue(); // 결과 평균값 저장하는 함수
-          ranking(); // 등수 정하는 함수
-          startTime = null;
-          endTime = null;
-          $screen.classList.remove("now");
+          // 화면 초록색일때
+          clickTime = new Date();
+          const diff = (clickTime - screenChangedTime) / 1000;
+          records.push(diff); // 계산된 값 []record 에 저장
+          average = records.reduce((a, b) => a + b) / records.length; // 평균값 구하기
+          $result.textContent = `반응속도 : ${diff}  평균 : ${average.toFixed(
+            3
+          )}`;
+          calculateTopFive(); // top5 산출
+          $screen.classList.remove("now"); // 파란화면으로 다시 되돌림
           $screen.classList.add("waiting");
-          $screen.textContent = "클릭해서 시작하세요.";
+          $screen.textContent = "화면을 클릭하면 측정을 시작합니다..";
+          screenChangedTime = null;
+          clickTime = null;
         }
-      });
+      };
+
+      $screen.addEventListener("click", onClickScreen);
     </script>
   </body>
 </html>
