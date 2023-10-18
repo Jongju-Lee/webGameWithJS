@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #screen {
+        width: 300px;
+        height: 200px;
+        text-align: center;
+        user-select: none;
+      }
+      #screen.waiting {
+        background-color: aqua;
+      }
+      #screen.ready {
+        background-color: red;
+        color: white;
+      }
+      #screen.now {
+        background-color: greenyellow;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="screen" class="waiting">클릭해서 시작하세요</div>
+    <div id="result"></div>
+    <script>
+      const $screen = document.querySelector("#screen");
+      const $result = document.querySelector("#result");
+      let click;
+      let screenChangedTime;
+      let clickedTime;
+
+      const onClickScreen = (e) => {
+        // const random = Math.floor(Math.random() * 3) + 2;
+        // e.target.className = "ready";
+        // e.target.textContent = "준비하세요 초록색으로 바뀌면 클릭!";
+        // let intervalId = setTimeout(() => {
+        //   e.target.className = "now";
+        //   e.target.textContent = "지금 클릭하세요!!";
+        //   screenChangedTime = new Date().getTime();
+        //   console.log(screenChangedTime);
+        // }, random * 1000);
+        // if (e.target.className === 'ready')
+        if (e.target.className === "waiting") {
+          e.target.className = "ready";
+          e.target.textContent = "준비하세요 초록색으로 바뀌면 클릭!";
+          const random = Math.floor(Math.random() * 3) + 2;
+          let timeoutId = setTimeout(() => {
+            e.target.className = "now";
+            e.target.textContent = "지금 클릭하세요!";
+            screenChangedTime = new Date().getTime();
+          }, random * 1000);
+        } else if (e.target.className === "ready") {
+          clearTimeout(timeoutId);
+          e.target.className = "waiting";
+          e.target.textContent = "너무 성급하셨습니다.. 다시 시도해 주세요..";
+        }
+      };
+
+      $screen.addEventListener("click", onClickScreen);
+    </script>
+  </body>
+</html>
