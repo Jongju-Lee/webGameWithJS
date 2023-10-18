@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        font-size: 22px;
+        padding-left: 10px;
+      }
+      table {
+        border-collapse: collapse;
+      }
+      td {
+        width: 50px;
+        height: 50px;
+        border: 1px solid black;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 style="margin-left: 30px">Tic Tac Toe</h1>
+    <div style="margin-bottom: 10px; margin-left: 5px">
+      <span id="turn"></span> 의 턴입니다.
+    </div>
+    <script>
+      const $table = document.createElement("table");
+      const $turn = document.querySelector("#turn");
+      let turn = "O";
+      $turn.textContent = turn;
+
+      const onClickTd = (e) => {
+        if (e.target.textContent) return;
+        e.target.textContent = turn;
+        turn = turn === "O" ? "X" : "O";
+        $turn.textContent = turn;
+      };
+
+      for (let i = 0; i < 3; i++) {
+        const $tr = document.createElement("tr");
+        for (let i = 0; i < 3; i++) {
+          const $td = document.createElement("td");
+          $td.addEventListener("click", onClickTd);
+          $tr.append($td);
+        }
+        $table.append($tr);
+      }
+      document.body.append($table);
+    </script>
+  </body>
+</html>
