@@ -27,16 +27,9 @@
       let turn = "O";
 
       const checkWinner = (target) => {
-        let rowIndex;
-        let cellIndex;
-        rows.forEach((row, ri) => {
-          row.forEach((cell, ci) => {
-            if (cell === target) {
-              rowIndex = ri;
-              cellIndex = ci;
-            }
-          });
-        });
+        let rowIndex = target.parentNode.rowIndex;
+        let cellIndex = target.cellIndex;
+
         // 세칸 모두 채워져 있는지?
         let hasWinner = false;
         // 가로줄 검사
@@ -79,22 +72,16 @@
         if (checkWinner(e.target)) {
           // 승리조건 검사
           $result.textContent = `${turn}님의 승리 입니다!`;
+          $table.removeEventListener("click", onClickTd);
+
           return;
         }
-        let draw = true;
-        rows.forEach((row) => {
-          row.forEach((cell) => {
-            if (!cell.textContent) {
-              draw = false;
-            }
-          });
-        });
+        // 무승부 검사
+        const draw = rows.flat().every((td) => td.textContent);
         if (draw) {
           $result.textContent = "무승부 입니다.";
           return;
         }
-        // 2023 10 19 오전 1시 15분
-        // 승부 판단하기 10분부터 보기
         turn = turn === "O" ? "X" : "O"; // 클릭하면 O,X 턴 자동변경
       };
 

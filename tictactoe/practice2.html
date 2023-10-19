@@ -4,18 +4,126 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      table {
+        border-collapse: collapse;
+      }
+      td {
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        border: 1px solid black;
+      }
+    </style>
   </head>
   <body>
+    <h3 style="margin-left: 12px">Tic Tac Toe</h3>
     <script>
+      const $table = document.createElement("table");
+      const $turn = document.querySelector(".turn");
       const rows = [];
-      for (let i = 0; i < 5; i++) {
-        const cells = [];
-        for (let j = 0; j < 4; j++) {
-          cells.push(1);
+      let turn = "O";
+      let clickable = true;
+
+      const checkWinner = (target) => {
+        let rowIndex = target.parentNode.rowIndex;
+        let cellIndex = target.cellIndex;
+        let hasWinner = false;
+        if (
+          // 가로 승리조건
+          rows[rowIndex][0].textContent === turn &&
+          rows[rowIndex][1].textContent === turn &&
+          rows[rowIndex][2].textContent === turn
+        ) {
+          hasWinner = true;
         }
+        if (
+          // 세로 승리조건
+          rows[0][cellIndex].textContent === turn &&
+          rows[1][cellIndex].textContent === turn &&
+          rows[2][cellIndex].textContent === turn
+        ) {
+          hasWinner = true;
+        }
+        if (
+          // 대각선 승리조건
+          rows[0][0].textContent === turn &&
+          rows[1][1].textContent === turn &&
+          rows[2][2].textContent === turn
+        ) {
+          hasWinner = true;
+        }
+        if (
+          // 대각선 승리조건
+          rows[0][2].textContent === turn &&
+          rows[1][1].textContent === turn &&
+          rows[2][0].textContent === turn
+        ) {
+          hasWinner = true;
+        }
+        return hasWinner;
+      };
+
+      const checkDraw = () => {
+        const draw = rows.flat().every((cell) => cell.textContent);
+        return draw;
+      };
+
+      const checkWinnerAndDraw = (target) => {
+        const hasWinner = checkWinner(target);
+        if (hasWinner) {
+          alert(`${turn}님이 승리하셨습니다!`);
+          location.reload();
+          return;
+        }
+        // 무승부조건 검사
+        const draw = checkDraw();
+        if (draw) {
+          alert("무승부 입니다.");
+          location.reload();
+          return;
+        }
+        turn = turn === "O" ? "X" : "O";
+      };
+
+      const onclickTd = (e) => {
+        if (!clickable) return; // 클릭 안되게
+        // td 클릭했을때
+        if (e.target.textContent) return;
+        e.target.textContent = turn;
+        // 승리조건 검사
+        checkWinnerAndDraw(e.target);
+
+        if (turn === "X") {
+          clickable = false;
+          setTimeout(() => {
+            const emptyCells = rows.flat().filter((cell) => !cell.textContent);
+            const randomCell =
+              emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            randomCell.textContent = "X";
+            clickable = true;
+            // 컴퓨터 승리 체크
+            checkWinnerAndDraw(randomCell);
+          }, 1000);
+        }
+      };
+
+      for (let i = 0; i < 3; i++) {
+        const $tr = document.createElement("tr");
+        const cells = [];
+        for (let j = 0; j < 3; j++) {
+          const $td = document.createElement("td");
+          $tr.append($td);
+          cells.push($td);
+        }
+        $table.append($tr);
         rows.push(cells);
       }
-      console.log(rows);
+      document.body.append($table);
+      $table.addEventListener("click", onclickTd);
     </script>
   </body>
 </html>
