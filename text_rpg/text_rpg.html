@@ -53,8 +53,12 @@
       const $monsterHp = document.querySelector("#monster_hp");
       const $monsterAtt = document.querySelector("#monster_att");
       const $message = document.querySelector("#message");
+      const $battleInput = document.querySelector("#battle_input");
+      const $menuInput = document.querySelector("#menu_input");
+      const $monsterStat = document.querySelectorAll("#monster_stat");
+      const $nameInput = document.querySelector("#name_input");
 
-      const hero = {
+      let hero = {
         name: "",
         lev: 1,
         maxHp: 100,
@@ -77,6 +81,22 @@
         { name: "스켈레톤", hp: 50, att: 15, xp: 20 },
         { name: "마왕", hp: 150, att: 35, xp: 50 },
       ];
+
+      const heroStatInitialization = () => {
+        // hero.name hero.lev hero.hp hero.xp hero.att
+        $heroName.textContent = "";
+        $heroLevel.textContent = "";
+        $heroHp.textContent = "";
+        $heroXp.textContent = "";
+        $heroAtt.textContent = "";
+      };
+
+      const monsterStatInitialization = () => {
+        // monster.name monster.hp monster.att
+        $monsterName.textContent = "";
+        $monsterHp.textContent = "";
+        $monsterAtt.textContent = "";
+      };
 
       $startScreen.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -111,16 +131,6 @@
           $monsterName.textContent = monster.name;
           $monsterHp.textContent = `HP : ${monster.hp}/${monster.maxHp}`;
           $monsterAtt.textContent = `ATT : ${monster.att}`;
-
-          // const monster1 = JSON.parse(JSON.stringify(monsterList[0]));
-          // const monster2 = monsterList[0];
-          // const monster3 = { ...monsterList[0] };
-          // monster1.name = "새 몬스터";
-          // console.log("깊은복사", monsterList[0].name);
-          // monster2.name = "새 몬스터";
-          // console.log("복사안함", monsterList[0].name);
-          // console.log("깊은복사 비교", monsterList[0] === monster1);
-          // console.log("복사안함 비교", monsterList[0] === monster2);
         } else if (inputValue === "2") {
           // 휴식
         } else if (inputValue === "3") {
@@ -133,29 +143,87 @@
         const inputValue = e.target["battle_input"].value;
         if (!["1", "2", "3"].includes(inputValue)) {
           alert("잘못된 입력입니다. 1 ~ 3 사이의 숫자를 입력하세요.");
+          $battleInput.value = "";
+          $battleInput.focus();
           return;
         }
         if (inputValue === "1") {
-          monster.hp -= hero.att;
-          $message.textContent = `${monster.name}에게 ${hero.att}의 데미지를 입혔습니다.`;
+          // 공격
+          hero.attack(monster);
+          $message.textContent = `${hero.name}이(가) ${monster.name}에게 ${hero.att}의 데미지를 입혔습니다.`;
+          $monsterHp.textContent = `HP : ${monster.hp}/${monster.maxHp}`;
           if (monster.hp <= 0) {
             // 몬스터 체력이 소진되면
             hero.xp += monster.xp; // 경험치 얻고
+            $message.textContent = `${monster.name}에게 승리하였습니다. 경험치를 ${monster.xp}얻었습니다.`;
+            $heroXp.textContent = `XP : ${hero.xp}`;
+            alert("승리하여 마을로 돌아갑니다.");
+            $message.textContent = "";
+            if (hero.xp >= hero.lev * 15) {
+              // 히어로 경험치 차면 레벨업
+              const diff = hero.xp - hero.lev * 15;
+              console.log("hero.lev", hero.lev);
+              console.log("hero.xp", hero.xp);
+              hero.xp = diff;
+              hero.lev += 1;
+              $message.textContent = `${hero.name}의 레벨이 ${hero.lev}lev로 올랐습니다.`;
+              $heroLevel.textContent = `${hero.lev}Lev`;
+              $heroXp.textContent = `XP : ${hero.xp}`;
+            }
             monster = null;
+            console.log(monster);
             $battleMenu.style.display = "none";
             $gameMenu.style.display = "block";
+            $monsterName.textContent = "";
+            $monsterHp.textContent = "";
+            $monsterAtt.textContent = "";
+            $menuInput.value = "";
+            $menuInput.focus();
             return;
           }
-          hero.hp -= monster.att;
+          $message.textContent = `${monster.name}의 공격으로 ${hero.name}의 체력이 ${monster.att}만큼 깎였습니다.`;
+          $heroHp.textContent = `HP : ${hero.hp}/${hero.maxHp}`;
           if (hero.hp <= 0) {
-            // 영웅의 체력이 소진되면
-            // 게임 오버 출력
+            // 영웅 체력이 소진되면
+            alert("GAME OVER..... 처음부터 다시 시작됩니다.");
+            monster = null;
+
+            hero = {
+              name: "",
+              lev: 1,
+              maxHp: 100,
+              hp: 100,
+              xp: 0,
+              att: 10,
+              attack(monster) {
+                monster.hp -= this.att;
+                this.hp -= monster.att;
+              },
+              heal(monster) {
+                this.hp += 20;
+                this.hp -= monster.att;
+              },
+            };
+            $battleMenu.style.display = "none";
+            $startScreen.style.display = "block";
+            $message.textContent = "";
+            heroStatInitialization(); // 영웅 스탯창 초기화
+            monsterStatInitialization(); // 몬스터 스탯창 초기화
+            $nameInput.value = "";
+            return;
           }
         } else if (inputValue === "2") {
-          // 회복
+          hero.heal(monster);
+          // 내 체력 20 올리기
+          // 몬스터한테 한대 얻어맞기
+
+          ///////////////////////////////////////////////////////
+          //2023. 10. 20. 오전 1 : 29
         } else if (inputValue === "3") {
           // 도망
         }
+        $battleInput.value = "";
+        $battleInput.focus();
       });
     </script>
   </body>
