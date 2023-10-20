@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>practice</title>
+  </head>
+  <body>
+    <script>
+      class Human {
+        constructor(name, age) {
+          this.name = name;
+          this.age = age;
+        }
+        introduceMySelf() {
+          console.log(
+            `제 이름은 ${this.name} 입니다. 나이는 ${this.age}세 입니다.`
+          );
+        }
+      }
+      const jongjuLee = new Human("이종주", 34);
+      jongjuLee.introduceMySelf();
+    </script>
+  </body>
+</html>
