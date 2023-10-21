@@ -3,23 +3,105 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>practice</title>
+    <title>textRPG</title>
   </head>
   <body>
+    <form id="start_screen">
+      <input id="start_input" placeholder="이름을 입력해 주세요." />
+      <button>시작!</button>
+    </form>
+    <div id="hero_status" style="display: none">
+      <span id="hero_name"></span>
+      <span id="hero_lev"></span>
+      <span id="hero_hp"></span>
+      <span id="hero_xp"></span>
+      <span id="hero_att"></span>
+    </div>
+    <form id="game_menu" style="display: none">
+      <div>1. 모험</div>
+      <div>2. 휴식</div>
+      <div>3. 종료</div>
+      <input type="game_input" />
+      <button>입력</button>
+    </form>
+    <form id="battle_menu" style="display: none">
+      <div>1. 모험</div>
+      <div>2. 휴식</div>
+      <div>3. 종료</div>
+      <input type="battle_input" />
+      <button>입력</button>
+    </form>
+    <div id="monster_status" style="display: none">
+      <span id="monster_name"></span>
+      <span id="monster_hp"></span>
+      <span id="monster_att"></span>
+    </div>
     <script>
-      class Human {
-        constructor(name, age) {
-          this.name = name;
-          this.age = age;
+      const $startScreen = document.querySelector("#start_screen");
+      const $startInput = document.querySelector("start_input");
+      const $gameMenu = document.querySelector("#game_menu");
+      const $battleMenu = document.querySelector("#battle_menu");
+      const $heroStatus = document.querySelector("#hero_status");
+      const $monsterStatus = document.querySelector("#monster_status");
+
+      class Game {
+        constructor(name) {
+          this.hero = null;
+          this.monster = null;
+          this.monsterList = [
+            { name: "슬라임", hp: 30, att: 10, xp: 10 },
+            { name: "스켈레톤", hp: 50, att: 15, xp: 20 },
+            { name: "마왕", hp: 150, att: 35, xp: 50 },
+          ];
         }
-        introduceMySelf() {
-          console.log(
-            `제 이름은 ${this.name} 입니다. 나이는 ${this.age}세 입니다.`
-          );
+        start(name) {
+          $gameMenu.addEventListener("submit", () => {});
+          $battleMenu.addEventListener("submit", () => {});
+          this.ChangeScreen("game");
+          this.hero = new Hero(this, name);
+          this.updateHeroStat();
+        }
+        ChangeScreen(changeTarget) {
+          if (changeTarget === "start") {
+            $startScreen.style.display = "block";
+            $gameMenu.style.display = "none";
+            $battleMenu.style.display = "none";
+          } else if (changeTarget === "game") {
+            $startScreen.style.display = "none";
+            $gameMenu.style.display = "block";
+            $battleMenu.style.display = "none";
+          } else if (changeTarget === "battle") {
+            $startScreen.style.display = "none";
+            $gameMenu.style.display = "none";
+            $battleMenu.style.display = "block";
+          }
+        }
+        updateHeroStat() {
+          const { hero } = this;
+          if (hero === null) {
+            // 여기서 부터 하면 됨.
+          }
         }
       }
-      const jongjuLee = new Human("이종주", 34);
-      jongjuLee.introduceMySelf();
+
+      class Hero {
+        constructor(game, name) {
+          this.game = game;
+          this.name = name;
+          this.level = 1;
+          this.hp = 100;
+          this.maxHp = 100;
+          this.xp = 0;
+          this.att = 10;
+        }
+        attack(target) {
+          target.hp -= this.att;
+        }
+        heal(target) {
+          this.hp += 20;
+          this.hp -= target.att;
+        }
+      }
     </script>
   </body>
 </html>
