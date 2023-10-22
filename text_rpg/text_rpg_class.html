@@ -124,13 +124,42 @@
           if (input === "1") {
             // 공격
             const { hero, monster } = this;
-            hero.attack(monster);
-            monster.attack(hero);
-            this.showMessage(
-              `${hero.att}의 데미지를 주고, ${monster.att}의 데미지를 받았다.`
-            );
-            this.updateHeroStat();
+            hero.attack(monster); // 히어로가 몬스터를 공격
+            if (monster.hp <= 0) {
+              // 몬스터가 죽으면
+              hero.xp += monster.xp;
+              this.showMessage(
+                `${monster.name}에게 승리하여 ${monster.xp}의 경험치를 얻었습니다.`
+              );
+              this.updateHeroStat();
+              this.monster = null;
+              this.updateMonsterStat();
+              if (hero.xp >= hero.level * 15) {
+                hero.xp = hero.xp - hero.level * 15;
+                hero.level += 1;
+                hero.maxHp += 10;
+                hero.hp = hero.maxHp;
+                hero.att += 5;
+                updateHeroStat();
+                alert(
+                  `히어로의 Level이 ${hero.level}로 올랐습니다. 축하합니다!`
+                );
+              }
+              this.changeScreen("game");
+              return;
+            }
             this.updateMonsterStat();
+            monster.attack(hero); // 몬스터가 히어로를 공격
+            if (hero.hp <= 0) {
+              alert("히어로가 사망 하였습니다. 새 히어로를 생성해 주세요....");
+              location.reload();
+              return;
+            }
+            this.updateHeroStat();
+
+            // 2023. 10. 23. 오전 01 : 20
+            // 클래스간 상호작용하기 10분부터 시청
+            // 회북이랑 도주 코딩하기
           } else if (input === "2") {
             // 회복
           } else if (input === "3") {
@@ -209,8 +238,6 @@
         const name = e.target["name_input"].value;
         game = new Game(name);
       });
-
-      // 클래스간 상호작용하기 10분부터 보면됨
     </script>
   </body>
 </html>
