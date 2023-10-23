@@ -152,8 +152,7 @@
             monster.attack(hero); // 몬스터가 히어로를 공격
             if (hero.hp <= 0) {
               alert("히어로가 사망 하였습니다. 새 히어로를 생성해 주세요....");
-              location.reload();
-              return;
+              this.quit();
             }
             this.updateHeroStat();
 
