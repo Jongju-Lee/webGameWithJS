@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>concentration test</title>
+    <style>
+      #wrapper {
+        max-width: 400px;
+      }
+      .card {
+        display: inline-block;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        width: 70px;
+        height: 100px;
+        perspective: 140px;
+      }
+      .card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+      }
+      .card.flipped .card-inner {
+        transform: rotateY(180deg);
+      }
+      .card-front {
+        background-color: navy;
+      }
+      .card-front,
+      .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 1px solid black;
+        backface-visibility: hidden;
+      }
+      .card-back {
+        transform: rotateY(180deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper"></div>
+    <script>
+      const $wrapper = document.querySelector("#wrapper");
+
+      const total = 12;
+      let colors = ["red", "orange", "yellow", "green", "blue", "white"];
+      let colorCopy = colors.concat(colors);
+      clickable = true;
+      let shuffled = [];
+      let clicked = [];
+
+      const createCard = (i) => {
+        const card = document.createElement("div");
+        card.className = "card"; // card 태그 생성
+        const cardInner = document.createElement("div");
+        cardInner.className = "card-inner"; // card-inner 태그 생성
+        const cardFront = document.createElement("div");
+        cardFront.className = "card-front"; // card-front 태그 생성
+        const cardBack = document.createElement("div");
+        cardBack.className = "card-back"; // card-back 태그 생성
+        cardBack.style.backgroundColor = shuffled[i];
+        cardInner.append(cardFront, cardBack);
+        card.append(cardInner);
+        return card;
+      };
+
+      const shuffle = () => {
+        for (let i = 0; colorCopy.length > 0; i++) {
+          const randomIndex = Math.floor(Math.random() * colorCopy.length);
+          shuffled = shuffled.concat(colorCopy.splice(randomIndex, 1));
+        }
+      };
+
+      function onClickCard() {
+        this.classList.toggle("flipped");
+        clicked.push(this);
+        console.log(clicked);
+        if (clicked.length !== 2) {
+          return;
+        }
+        const firstBackColor =
+          clicked[0].querySelector(".card-back").style.backgroundColor;
+        const secondBackColor =
+          clicked[1].querySelector(".card-back").style.backgroundColor;
+        if (firstBackColor === secondBackColor) {
+          console.log("1 , 2 가 같습니다.");
+        }
+        clicked = [];
+        // card click 짝맞추기 8minutes
+      }
+
+      const startGame = () => {
+        clickable = false;
+        for (let i = 0; i < total; i++) {
+          shuffle();
+          const card = createCard(i);
+          card.addEventListener("click", onClickCard);
+          $wrapper.append(card);
+        }
+        document.querySelectorAll(".card").forEach((card, idx) => {
+          // 처음 카드색 전체 공개
+          setTimeout(() => {
+            card.classList.add("flipped");
+          }, 1000 + 100 * idx);
+        });
+        document.querySelectorAll(".card").forEach((card, idx) => {
+          // 카드 다시 뒤집음
+          setTimeout(() => {
+            card.classList.remove("flipped");
+          }, 4000 + 100 * idx);
+        });
+      };
+      startGame();
+    </script>
+  </body>
+</html>
