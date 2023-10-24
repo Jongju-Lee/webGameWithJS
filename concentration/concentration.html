@@ -45,8 +45,10 @@
   </head>
   <body>
     <div id="wrapper"></div>
+    <div id="timer"></div>
     <script>
       const $wrapper = document.querySelector("#wrapper");
+      const $timer = document.querySelector("#timer");
 
       const total = 12;
       let colors = ["red", "orange", "yellow", "green", "blue", "white"];
@@ -55,6 +57,8 @@
       let shuffled = [];
       let clicked = [];
       let completed = [];
+      let startTime;
+      let completeTime;
 
       const createCard = (i) => {
         const card = document.createElement("div");
@@ -84,9 +88,7 @@
           return;
         this.classList.toggle("flipped");
         clicked.push(this);
-        if (clicked.length !== 2) {
-          return;
-        }
+        if (clicked.length !== 2) return;
         clickable = false;
         const firstBackColor =
           clicked[0].querySelector(".card-back").style.backgroundColor;
@@ -100,10 +102,14 @@
           if (completed.length !== total) {
             return;
           }
+          completeTime = new Date();
+          const diff = completeTime - startTime;
+          console.log(diff);
+          $timer.textContent = `걸린 시간 : ${diff / 1000}`;
           setTimeout(() => {
+            resetGame();
             alert("축하합니다.");
           }, 1000);
-          resetGame();
           return;
         }
         setTimeout(() => {
@@ -128,20 +134,24 @@
             card.classList.add("flipped");
           }, 1000 + 100 * idx);
         });
-        document.querySelectorAll(".card").forEach((card, idx) => {
+        document.querySelectorAll(".card").forEach((card) => {
           // 카드 다시 뒤집음
           setTimeout(() => {
             card.classList.remove("flipped");
             clickable = true;
-          }, 4000 + 100 * idx);
+            startTime = new Date();
+          }, 4000);
         });
       };
       startGame();
 
       function resetGame() {
         $wrapper.innerHTML = "";
+        $timer.textContent = "";
         colorCopy = colors.concat(colors);
         completed = [];
+        startTime = null;
+        completeTime = null;
         startGame();
       }
       // 2023. 10. 24.

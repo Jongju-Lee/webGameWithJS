@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>concentration test</title>
+    <style>
+      #wrapper {
+        max-width: 400px;
+      }
+      .card {
+        display: inline-block;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        width: 70px;
+        height: 100px;
+        perspective: 140px;
+      }
+      .card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+      }
+      .card.flipped .card-inner {
+        transform: rotateY(180deg);
+      }
+      .card-front {
+        background-color: navy;
+      }
+      .card-front,
+      .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 1px solid black;
+        backface-visibility: hidden;
+      }
+      .card-back {
+        transform: rotateY(180deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper"></div>
+    <script>
+      const $wrapper = document.querySelector("#wrapper");
+      const total = 12;
+      let colors = ["red", "orange", "yellow", "green", "blue", "white"];
+      let copyColors = colors.concat(colors);
+      let shuffled = [];
+      let clicked = [];
+      let completed = [];
+      let clickable = false;
+
+      const reversingCard = () => {
+        clickable = false;
+        setTimeout(() => {
+          clicked[0].classList.remove("flipped");
+          clicked[1].classList.remove("flipped");
+          clicked = [];
+          clickable = true;
+        }, 700);
+      };
+
+      const resetGame = () => {
+        completed = [];
+        clicked = [];
+        copyColors = colors.concat(colors);
+        clickable = false;
+        $wrapper.innerHTML = "";
+        startGame();
+      };
+
+      const flipAllCards = () => {
+        document.querySelectorAll(".card").forEach((card, idx) => {
+          setTimeout(() => {
+            card.classList.add("flipped");
+          }, 1000 + 100 * idx);
+        });
+      };
+
+      const closeAllCards = () => {
+        document.querySelectorAll(".card").forEach((card, idx) => {
+          setTimeout(() => {
+            card.classList.remove("flipped");
+            clickable = true;
+          }, 4000 + 100 * idx);
+        });
+      };
+
+      const colorizeCard = () => {
+        for (let i = 0; i < total; i++) {
+          $wrapper.append(createCard(i));
+        }
+      };
+
+      function onClickCard() {
+        if (!clickable || completed.includes(this) || clicked[0] === this)
+          return;
+        this.classList.toggle("flipped");
+        clicked.push(this); // 클릭 된 카드는 clicked에 저장
+        if (clicked.length !== 2) return; // clicked에 두장이 있지 않으면 여기서 로직을 끝냄
+        const firstCard =
+          clicked[0].querySelector(".card-back").style.backgroundColor;
+        const secondCard =
+          clicked[1].querySelector(".card-back").style.backgroundColor;
+        if (firstCard === secondCard) {
+          completed = completed.concat(clicked);
+          clicked = [];
+          if (completed.length >= total) {
+            alert("승리하였습니다!");
+            resetGame();
+          }
+          return;
+        }
+        reversingCard(); // 카드 원래대로 되돌리기
+        console.log(completed);
+      }
+
+      const createCard = (i) => {
+        const card = document.createElement("div"); // card태그 생성
+        card.classList.add("card");
+        const cardInner = document.createElement("div"); // cardInner 태그 생성
+        cardInner.classList.add("card-inner");
+        const cardFront = document.createElement("div"); // cardFront 태그 생성
+        cardFront.classList.add("card-front");
+        const cardBack = document.createElement("div"); // cardBack 태그 생성
+        cardBack.classList.add("card-back");
+        cardBack.style.backgroundColor = shuffled[i];
+        cardInner.append(cardFront, cardBack);
+        card.append(cardInner);
+        card.addEventListener("click", onClickCard);
+        return card;
+      };
+
+      const shuffle = () => {
+        for (let i = 0; i < total; i++) {
+          const randomIndex = Math.floor(Math.random() * copyColors.length);
+          shuffled = shuffled.concat(copyColors.splice(randomIndex, 1));
+        }
+      };
+
+      const startGame = () => {
+        shuffle();
+        colorizeCard();
+        flipAllCards();
+        closeAllCards();
+      };
+      startGame();
+    </script>
+  </body>
+</html>
